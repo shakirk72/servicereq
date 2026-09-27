@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfa Elevator Service Pro</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#172033}
+.app{display:flex;min-height:100vh}.sidebar{width:235px;background:#172554;color:#fff;padding:20px 14px;position:fixed;top:0;bottom:0}
+.logo{font-size:21px;font-weight:700;padding:8px 10px 25px}.nav button{display:block;width:100%;border:0;background:transparent;color:#dbeafe;text-align:left;padding:12px 14px;border-radius:9px;margin:4px 0;cursor:pointer;font-size:14px}.nav button.active,.nav button:hover{background:#2563eb;color:white}
+.main{margin-left:235px;width:calc(100% - 235px);padding:24px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.topbar h1{margin:0;font-size:25px}.muted{color:#64748b;font-size:13px}
+.page{display:none}.page.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:#fff;border-radius:13px;padding:18px;box-shadow:0 2px 10px #0000000a}.card .num{font-size:28px;font-weight:700;margin-top:7px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.section{background:#fff;border-radius:13px;padding:18px;box-shadow:0 2px 10px #0000000a;margin-bottom:18px}.section h2{font-size:18px;margin:0 0 15px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:left}th{background:#f8fafc;font-weight:700}
+button.primary,.btn{border:0;background:#2563eb;color:#fff;padding:9px 13px;border-radius:8px;cursor:pointer}.btn.green{background:#16a34a}.btn.orange{background:#ea580c}.btn.gray{background:#64748b}.btn.red{background:#dc2626}.btn.small{padding:6px 9px;font-size:12px}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid #d5dbe5;border-radius:8px;margin-top:5px;background:#fff}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field{margin-bottom:8px}.field label{font-size:12px;color:#475569;font-weight:600}
+.badge{display:inline-block;padding:5px 8px;border-radius:20px;font-size:11px;font-weight:700}.pending{background:#fff7ed;color:#c2410c}.assigned{background:#eff6ff;color:#1d4ed8}.progress{background:#fef3c7;color:#a16207}.completed{background:#dcfce7;color:#15803d}
+.toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:15px}.toolbar>div{min-width:180px}.summarybar{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0 15px}.summarybox{background:#f8fafc;border-radius:9px;padding:10px 15px}.summarybox b{font-size:18px}
+.mobile-wrap{display:flex;justify-content:center;padding:10px}.phone{width:390px;max-width:100%;min-height:760px;background:#f5f7fb;border:9px solid #111827;border-radius:34px;overflow:hidden;box-shadow:0 10px 30px #0002}.phone-top{background:#2563eb;color:#fff;padding:24px 18px 20px}.phone-top h2{margin:0 0 5px;font-size:22px}.phone-top p{margin:0;opacity:.9;font-size:13px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;background:#fff}.stat{background:#f8fafc;border-radius:10px;padding:10px;text-align:center}.stat b{display:block;font-size:21px}.stat small{font-size:10px;color:#64748b}.visit{background:#fff;margin:10px 12px;border-radius:14px;padding:14px;box-shadow:0 2px 8px #0000000b}.visit-head{display:flex;justify-content:space-between;gap:8px}.person{font-weight:700;font-size:16px}.client{font-size:13px;color:#334155;margin-top:3px}.visit-info{font-size:12px;color:#64748b;line-height:1.65;margin:9px 0}.visit-actions{display:flex;gap:7px}.visit-actions button{flex:1}.timebox{background:#f8fafc;padding:8px;border-radius:8px;font-size:11px;margin-bottom:9px}
+.report-tabs{display:grid;grid-template-columns:1fr 1fr;gap:15px}.empty{padding:25px;text-align:center;color:#64748b}
+@media(max-width:900px){.sidebar{position:static;width:100%;height:auto}.app{display:block}.main{margin-left:0;width:100%;padding:15px}.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.nav button{font-size:12px}.cards{grid-template-columns:repeat(2,1fr)}.grid2,.report-tabs{grid-template-columns:1fr}}
+@media(max-width:520px){.formgrid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.nav{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo">Alfa Elevator Service Pro</div>
+  <div class="nav">
+    <button class="active" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button onclick="showPage('requests',this)">Service Requests</button>
+    <button onclick="showPage('employees',this)">Employees</button>
+    <button onclick="showPage('clients',this)">Clients</button>
+    <button onclick="showPage('employeeApp',this)">Employee App</button>
+    <button onclick="showPage('reports',this)">Reports</button>
+  </div>
+</aside>
+
+<main class="main">
+<div class="topbar"><div><h1 id="pageTitle">Dashboard</h1><div class="muted">Client Service Request & Field Service Management</div></div></div>
+
+<section id="dashboard" class="page active">
+  <div class="cards">
+    <div class="card"><div class="muted">Total Requests</div><div class="num" id="dashTotal">0</div></div>
+    <div class="card"><div class="muted">Pending</div><div class="num" id="dashPending">0</div></div>
+    <div class="card"><div class="muted">In Progress</div><div class="num" id="dashProgress">0</div></div>
+    <div class="card"><div class="muted">Completed</div><div class="num" id="dashCompleted">0</div></div>
+  </div>
+  <div class="section" style="margin-top:18px"><h2>Today's Visits</h2><div id="dashboardVisits"></div></div>
+</section>
+
+<section id="requests" class="page">
+ <div class="section">
+  <div style="display:flex;justify-content:space-between;align-items:center"><h2>Service Requests</h2><button class="primary" onclick="openRequestForm()">+ New Request</button></div>
+  <div id="requestForm" style="display:none;background:#f8fafc;padding:15px;border-radius:10px;margin-bottom:15px">
+   <div class="formgrid">
+    <div class="field"><label>Client</label><select id="rClient"></select></div>
+    <div class="field"><label>Contact Person</label><input id="rPerson" placeholder="Person to meet"></div>
+    <div class="field"><label>Employee</label><select id="rEmployee"></select></div>
+    <div class="field"><label>Service</label><input id="rService" placeholder="Service / complaint"></div>
+    <div class="field"><label>Date</label><input id="rDate" type="date"></div>
+    <div class="field"><label>Time</label><input id="rTime" type="time"></div>
+    <div class="field"><label>Location</label><input id="rLocation" placeholder="Client site"></div>
+    <div class="field"><label>Status</label><select id="rStatus"><option>Pending</option><option>Assigned</option><option>In Progress</option><option>Completed</option></select></div>
+   </div>
+   <div class="field"><label>Details</label><textarea id="rDetails" rows="2"></textarea></div>
+   <button class="primary" onclick="saveRequest()">Save Request</button> <button class="btn gray" onclick="closeRequestForm()">Cancel</button>
+  </div>
+  <div style="overflow:auto"><table><thead><tr><th>ID</th><th>Client</th><th>Contact</th><th>Employee</th><th>Date</th><th>Service</th><th>Status</th></tr></thead><tbody id="requestsBody"></tbody></table></div>
+ </div>
+</section>
+
+<section id="employees" class="page">
+ <div class="grid2">
+  <div class="section"><h2>Add Employee</h2>
+   <div class="field"><label>Name</label><input id="newEmployee" placeholder="Employee name"></div>
+   <div class="field"><label>Mobile</label><input id="newEmployeePhone" placeholder="Mobile number"></div>
+   <button class="primary" onclick="addEmployee()">Add Employee</button>
+  </div>
+  <div class="section"><h2>Employees</h2><div id="employeesList"></div></div>
+ </div>
+</section>
+
+<section id="clients" class="page">
+ <div class="grid2">
+  <div class="section"><h2>Add Client</h2>
+   <div class="field"><label>Client Name</label><input id="newClient" placeholder="Client name"></div>
+   <div class="field"><label>Location</label><input id="newClientLocation" placeholder="Site / address"></div>
+   <button class="primary" onclick="addClient()">Add Client</button>
+  </div>
+  <div class="section"><h2>Clients</h2><div id="clientsList"></div></div>
+ </div>
+</section>
+
+<section id="employeeApp" class="page">
+ <div class="section">
+  <h2>Employee Mobile App Demo</h2>
+  <div class="toolbar"><div><label class="muted">Select Employee</label><select id="appEmployee" onchange="renderEmployeeApp()"></select></div><div class="muted">Mobile-style field employee screen</div></div>
+  <div class="mobile-wrap"><div class="phone">
+    <div class="phone-top"><h2 id="phoneName">Arun Kumar</h2><p id="phoneDate"></p></div>
+    <div class="stats">
+      <div class="stat"><b id="todayTotal">0</b><small>TOTAL VISITS</small></div>
+      <div class="stat"><b id="todayDone">0</b><small>COMPLETED</small></div>
+      <div class="stat"><b id="todayPending">0</b><small>PENDING</small></div>
+    </div>
+    <div id="mobileVisits"></div>
+  </div></div>
+ </div>
+</section>
+
+<section id="reports" class="page">
+ <div class="report-tabs">
+  <div class="section">
+   <h2>Client-wise Monthly Visit Report</h2>
+   <div class="toolbar">
+    <div><label class="muted">Client</label><select id="reportClient" onchange="renderReports()"></select></div>
+    <div><label class="muted">Month</label><input id="clientMonth" type="month" onchange="renderReports()"></div>
+   </div>
+   <div class="summarybar"><div class="summarybox">Total Visits<br><b id="clientVisitCount">0</b></div></div>
+   <div style="overflow:auto"><table><thead><tr><th>Date</th><th>Client</th><th>Employee</th><th>Service</th><th>Location</th><th>Time</th><th>Status</th></tr></thead><tbody id="clientReportBody"></tbody></table></div>
+  </div>
+  <div class="section">
+   <h2>Employee-wise Monthly Visit Report</h2>
+   <div class="toolbar">
+    <div><label class="muted">Employee</label><select id="reportEmployee" onchange="renderReports()"></select></div>
+    <div><label class="muted">Month</label><input id="employeeMonth" type="month" onchange="renderReports()"></div>
+   </div>
+   <div class="summarybar">
+    <div class="summarybox">Total Visits<br><b id="employeeVisitCount">0</b></div>
+    <div class="summarybox">Clients Visited<br><b id="employeeClientCount">0</b></div>
+   </div>
+   <div style="overflow:auto"><table><thead><tr><th>Date</th><th>Client</th><th>Employee</th><th>Service</th><th>Location</th><th>Time</th><th>Status</th></tr></thead><tbody id="employeeReportBody"></tbody></table></div>
+  </div>
+ </div>
+</section>
+</main>
+</div>
+
+<script>
+const KEY='fieldserve_demo_v2';
+const today='2026-09-27';
+let db=JSON.parse(localStorage.getItem(KEY)||'null');
+
+function seed(){
+ if(db) return;
+ db={
+ employees:[
+  {id:1,name:'Raj Kumar',phone:'9000000001'},
+  {id:2,name:'Amit Sharma',phone:'9000000002'},
+  {id:3,name:'Suresh Verma',phone:'9000000003'},
+  {id:4,name:'Mohan Singh',phone:'9000000004'},
+  {id:5,name:'Anjan Kumar',phone:'9000000005'},
+  {id:6,name:'Arun Kumar',phone:'9000000006'}
+ ],
+ clients:[
+  {id:1,name:'Airtel',location:'Airtel Service Site'},
+  {id:2,name:'Alfa Elevator Service',location:'Alfa Elevator Service Site'},
+  {id:3,name:'DBS Bank',location:'DBS Bank Branch'},
+  {id:4,name:'Union Bank',location:'Union Bank Branch'},
+  {id:5,name:'Mahindra',location:'Mahindra Plant'},
+  {id:6,name:'ABC Industries Ltd.',location:'ABC Site'},
+  {id:7,name:'XYZ Manufacturing Pvt. Ltd.',location:'XYZ Site'},
+  {id:8,name:'PQR Enterprises',location:'PQR Site'}
+ ],
+ requests:[
+  {id:'SR-1001',client:'ABC Industries Ltd.',person:'Rakesh Jain',employee:'Raj Kumar',date:today,time:'09:30',service:'Attendance Machine Issue',location:'ABC Site',status:'Completed',details:'Machine not syncing',inTime:'09:25',outTime:'10:30'},
+  {id:'SR-1002',client:'XYZ Manufacturing Pvt. Ltd.',person:'Amit Verma',employee:'Amit Sharma',date:today,time:'11:00',service:'Software Support',location:'XYZ Site',status:'In Progress',details:'Software support',inTime:'10:55',outTime:''},
+  {id:'SR-1003',client:'PQR Enterprises',person:'Suresh Patel',employee:'Suresh Verma',date:today,time:'14:00',service:'Installation',location:'PQR Site',status:'Assigned',details:'New installation',inTime:'',outTime:''},
+  {id:'SR-1004',client:'ABC Industries Ltd.',person:'Neeraj Gupta',employee:'',date:'2026-09-28',time:'10:00',service:'Preventive Maintenance',location:'ABC Site',status:'Pending',details:'AMC visit',inTime:'',outTime:''},
+
+  {id:'SR-A01',client:'Airtel',person:'Rajesh Sharma',employee:'Arun Kumar',date:today,time:'09:30',service:'Machine Service',location:'Airtel Service Site',status:'Completed',details:'Routine service',inTime:'09:28',outTime:'10:35'},
+  {id:'SR-A02',client:'Alfa Elevator Service',person:'Amit Verma',employee:'Arun Kumar',date:today,time:'11:00',service:'Maintenance',location:'Alfa Elevator Service Site',status:'Completed',details:'Elevator maintenance',inTime:'10:58',outTime:'12:05'},
+  {id:'SR-A03',client:'DBS Bank',person:'Suresh Patel',employee:'Arun Kumar',date:today,time:'13:00',service:'Complaint Service',location:'DBS Bank Branch',status:'Pending',details:'Complaint visit',inTime:'',outTime:''},
+  {id:'SR-A04',client:'Union Bank',person:'Vikram Singh',employee:'Arun Kumar',date:today,time:'15:00',service:'AMC Service',location:'Union Bank Branch',status:'Pending',details:'AMC service',inTime:'',outTime:''},
+  {id:'SR-A05',client:'Mahindra',person:'Neeraj Gupta',employee:'Arun Kumar',date:today,time:'17:00',service:'Preventive Maintenance',location:'Mahindra Plant',status:'Pending',details:'Preventive visit',inTime:'',outTime:''},
+
+  {id:'SR-MH11',client:'Alfa Elevator Service',person:'Deepak Mehta',employee:'Raj Kumar',date:'2026-09-11',time:'10:00',service:'Service Visit',location:'Alfa Elevator Service Site',status:'Completed',details:'Service',inTime:'09:55',outTime:'11:10'},
+  {id:'SR-MH26',client:'Alfa Elevator Service',person:'Kunal Shah',employee:'Anjan Kumar',date:'2026-09-26',time:'12:00',service:'Maintenance',location:'Alfa Elevator Service Site',status:'Completed',details:'Maintenance',inTime:'11:55',outTime:'13:00'},
+  {id:'SR-MH27',client:'Alfa Elevator Service',person:'Rohit Jain',employee:'Arun Kumar',date:'2026-09-27',time:'11:00',service:'Inspection',location:'Alfa Elevator Service Site',status:'Completed',details:'Inspection',inTime:'10:58',outTime:'12:05'}
+ ]};
+ save();
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));}
+seed();
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function statusBadge(s){let c=s==='Completed'?'completed':s==='Pending'?'pending':s==='In Progress'?'progress':'assigned';return `<span class="badge ${c}">${esc(s)}</span>`}
+function showPage(id,btn){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+ if(btn)btn.classList.add('active');
+ const names={dashboard:'Dashboard',requests:'Service Requests',employees:'Employees',clients:'Clients',employeeApp:'Employee App',reports:'Reports'};
+ document.getElementById('pageTitle').textContent=names[id];
+ if(id==='employeeApp') renderEmployeeApp();
+ if(id==='reports') renderReports();
+}
+function populateSelects(){
+ const cs=db.clients.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+ const es=db.employees.map(e=>`<option value="${esc(e.name)}">${esc(e.name)}</option>`).join('');
+ ['rClient','reportClient'].forEach(id=>document.getElementById(id).innerHTML=cs);
+ document.getElementById('rEmployee').innerHTML='<option value="">Unassigned</option>'+es;
+ ['appEmployee','reportEmployee'].forEach(id=>document.getElementById(id).innerHTML=es);
+}
+function refresh(){
+ populateSelects();renderDashboard();renderRequests();renderEmployees();renderClients();renderEmployeeApp();renderReports();
+}
+function renderDashboard(){
+ const r=db.requests;document.getElementById('dashTotal').textContent=r.length;
+ document.getElementById('dashPending').textContent=r.filter(x=>x.status==='Pending').length;
+ document.getElementById('dashProgress').textContent=r.filter(x=>x.status==='In Progress').length;
+ document.getElementById('dashCompleted').textContent=r.filter(x=>x.status==='Completed').length;
+ const visits=r.filter(x=>x.date===today);
+ document.getElementById('dashboardVisits').innerHTML=visits.length?`<div style="overflow:auto"><table><thead><tr><th>Time</th><th>Client</th><th>Contact</th><th>Employee</th><th>Status</th><th>IN</th><th>OUT</th></tr></thead><tbody>${visits.map(v=>`<tr><td>${v.time}</td><td>${esc(v.client)}</td><td>${esc(v.person)}</td><td>${esc(v.employee||'Unassigned')}</td><td>${statusBadge(v.status)}</td><td>${v.inTime||'—'}</td><td>${v.outTime||'—'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No visits today</div>';
+}
+function renderRequests(){
+ document.getElementById('requestsBody').innerHTML=db.requests.map(r=>`<tr><td>${r.id}</td><td>${esc(r.client)}</td><td>${esc(r.person)}</td><td>${esc(r.employee||'Unassigned')}</td><td>${r.date}<br>${r.time}</td><td>${esc(r.service)}</td><td>${statusBadge(r.status)}</td></tr>`).join('');
+}
+function renderEmployees(){
+ document.getElementById('employeesList').innerHTML=db.employees.map(e=>{
+  const count=db.requests.filter(r=>r.employee===e.name).length;
+  return `<div style="padding:12px 0;border-bottom:1px solid #e5e7eb"><b>${esc(e.name)}</b><div class="muted">${esc(e.phone)} • ${count} visits/requests</div></div>`;
+ }).join('');
+}
+function renderClients(){
+ document.getElementById('clientsList').innerHTML=db.clients.map(c=>{
+  const count=db.requests.filter(r=>r.client===c.name).length;
+  return `<div style="padding:12px 0;border-bottom:1px solid #e5e7eb"><b>${esc(c.name)}</b><div class="muted">${esc(c.location)} • ${count} visits</div></div>`;
+ }).join('');
+}
+function openRequestForm(){
+ document.getElementById('requestForm').style.display='block';
+ document.getElementById('rDate').value=today;
+ document.getElementById('rTime').value='10:00';
+}
+function closeRequestForm(){document.getElementById('requestForm').style.display='none'}
+function saveRequest(){
+ const r={id:'SR-'+(1000+db.requests.length+1),client:rClient.value,person:rPerson.value||'Client Contact',employee:rEmployee.value,date:rDate.value,time:rTime.value,service:rService.value||'Service Visit',location:rLocation.value||'Client Site',status:rStatus.value,details:rDetails.value,inTime:'',outTime:''};
+ db.requests.push(r);save();closeRequestForm();refresh();
+}
+function addEmployee(){
+ const name=document.getElementById('newEmployee').value.trim();if(!name)return;
+ db.employees.push({id:Date.now(),name,phone:document.getElementById('newEmployeePhone').value.trim()});
+ save();document.getElementById('newEmployee').value='';document.getElementById('newEmployeePhone').value='';refresh();
+}
+function addClient(){
+ const name=document.getElementById('newClient').value.trim();if(!name)return;
+ db.clients.push({id:Date.now(),name,location:document.getElementById('newClientLocation').value.trim()||name+' Site'});
+ save();document.getElementById('newClient').value='';document.getElementById('newClientLocation').value='';refresh();
+}
+function renderEmployeeApp(){
+ const emp=document.getElementById('appEmployee').value || 'Arun Kumar';
+ const visits=db.requests.filter(r=>r.employee===emp && r.date===today).sort((a,b)=>a.time.localeCompare(b.time));
+ document.getElementById('phoneName').textContent=emp;
+ document.getElementById('phoneDate').textContent='Today • '+new Date(today+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+ document.getElementById('todayTotal').textContent=visits.length;
+ document.getElementById('todayDone').textContent=visits.filter(v=>v.status==='Completed').length;
+ document.getElementById('todayPending').textContent=visits.filter(v=>v.status!=='Completed').length;
+ document.getElementById('mobileVisits').innerHTML=visits.length?visits.map((v,i)=>{
+   let action='';
+   if(v.status==='Completed'){
+    action=`<div class="timebox">IN: <b>${v.inTime||'—'}</b> &nbsp; | &nbsp; OUT: <b>${v.outTime||'—'}</b></div><button class="btn green small" disabled>✓ Completed</button>`;
+   }else if(!v.inTime){
+    action=`<button class="btn green" onclick="checkIn('${v.id}')">CHECK IN</button><button class="btn gray" onclick="navigateVisit('${v.id}')">NAVIGATE</button>`;
+   }else{
+    action=`<div class="timebox">IN Time: <b>${v.inTime}</b></div><button class="btn orange" onclick="checkOut('${v.id}')">CHECK OUT</button>`;
+   }
+   return `<div class="visit">
+    <div class="visit-head"><div><div class="person">${i+1}. ${esc(v.person)}</div><div class="client">${esc(v.client)}</div></div>${statusBadge(v.status)}</div>
+    <div class="visit-info">🕘 ${v.time} &nbsp; • &nbsp; 🔧 ${esc(v.service)}<br>📍 ${esc(v.location)}</div>
+    <div class="visit-actions">${action}</div>
+   </div>`;
+ }).join(''):'<div class="empty">No visits scheduled for today.</div>';
+}
+function nowTime(){return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false})}
+function checkIn(id){
+ const r=db.requests.find(x=>x.id===id);if(!r)return;
+ r.inTime=nowTime();r.status='In Progress';save();refresh();
+}
+function checkOut(id){
+ const r=db.requests.find(x=>x.id===id);if(!r)return;
+ if(!r.inTime)r.inTime=nowTime();r.outTime=nowTime();r.status='Completed';save();refresh();
+}
+function navigateVisit(id){const r=db.requests.find(x=>x.id===id);alert('Navigation demo\\n\\nGo to: '+r.location+'\\nContact: '+r.person);}
+function renderReports(){
+ const cm=document.getElementById('clientMonth').value||'2026-09';
+ const em=document.getElementById('employeeMonth').value||'2026-09';
+ document.getElementById('clientMonth').value=cm;document.getElementById('employeeMonth').value=em;
+ const client=document.getElementById('reportClient').value;
+ const employee=document.getElementById('reportEmployee').value;
+ const cr=db.requests.filter(r=>r.client===client && r.date.startsWith(cm)).sort((a,b)=>a.date.localeCompare(b.date));
+ const er=db.requests.filter(r=>r.employee===employee && r.date.startsWith(em)).sort((a,b)=>a.date.localeCompare(b.date));
+ document.getElementById('clientVisitCount').textContent=cr.length;
+ document.getElementById('employeeVisitCount').textContent=er.length;
+ document.getElementById('employeeClientCount').textContent=new Set(er.map(r=>r.client)).size;
+ const rows=a=>a.length?a.map(r=>`<tr><td>${r.date}</td><td>${esc(r.client)}</td><td>${esc(r.employee||'Unassigned')}</td><td>${esc(r.service)}</td><td>${esc(r.location)}</td><td>${r.time}</td><td>${statusBadge(r.status)}</td></tr>`).join(''):'<tr><td colspan="7" class="empty">No visits found</td></tr>';
+ document.getElementById('clientReportBody').innerHTML=rows(cr);
+ document.getElementById('employeeReportBody').innerHTML=rows(er);
+}
+refresh();
+</script>
+</body>
+</html>
